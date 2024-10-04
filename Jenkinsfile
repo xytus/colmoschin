@@ -32,7 +32,7 @@ pipeline {
                 // Optionally, use SSH to start OWASP ZAP on the Kali Linux machine
                 sshagent (credentials: ['kali-ssh-credentials']) {
                     sh '''
-                    ssh colmoschin@${ZAP_HOST} "zaproxy -daemon -host 0.0.0.0 -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true"
+                    ssh colmoschin@${ZAP_HOST} "zaproxy -daemon -host 0.0.0.0 -port 8080 -config 'api.addrs.addr.name=.*' -config 'api.addrs.addr.regex=true'"
                     '''
                 }
             }
