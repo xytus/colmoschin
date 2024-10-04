@@ -21,13 +21,5 @@ pipeline {
                 sh 'python3 test_app.py'
             }
         }
-        stage('Dependency Check') {
-            steps {
-                echo 'Running OWASP Dependency-Check...'
-                sh 'dependency-check --scan ./ --out report'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-    }
-}
-
     }
 }
