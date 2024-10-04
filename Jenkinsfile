@@ -21,5 +21,12 @@ pipeline {
                 sh 'python3 test_app.py'
             }
         }
+        stage('Dependency Check') {
+            steps {
+                echo 'Running OWASP Dependency-Check...'
+                sh '/usr/local/bin/dependency-check --project "colmoschin_assignment_1" --scan . --format "ALL" --out "./dependency-check-report"'
+    }
+}
+
     }
 }
