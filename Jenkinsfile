@@ -37,6 +37,7 @@ pipeline {
                          -d "url=${LOCAL_APP_URL}&recurse=true&apikey=${API_KEY}"
                     """
                 }
+                sleep 60
             }
         }
         stage('Run ZAP Active Scan') {
@@ -50,6 +51,7 @@ pipeline {
                          -d "url=${LOCAL_APP_URL}&apikey=${API_KEY}"
                     """
                 }
+                sleep 60
             }
         }
         stage('Save ZAP Report') {
