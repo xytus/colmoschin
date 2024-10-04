@@ -21,5 +21,10 @@ pipeline {
                 sh 'python3 test_app.py'
             }
         }
+        stage('Dependency Check') { 
+            steps { 
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml' 
+            } 
+        }
     }
 }
