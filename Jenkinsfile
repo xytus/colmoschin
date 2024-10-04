@@ -31,8 +31,9 @@ pipeline {
             steps {
                 echo 'Starting OWASP ZAP on the Kali Linux machine...'
                 sh """
-                sshpass -p '${SSH_PASSWORD}' ssh -o StrictHostKeyChecking=no ${SSH_USER}@${ZAP_HOST} "zaproxy -daemon -host 0.0.0.0 -port 8080 -config 'api.addrs.addr.name=.*' -config 'api.addrs.addr.regex=true' &"
+                nohup sshpass -p '${SSH_PASSWORD}' ssh -o StrictHostKeyChecking=no ${SSH_USER}@${ZAP_HOST} "zaproxy -daemon -host 0.0.0.0 -port 8080 -config 'api.addrs.addr.name=.*' -config 'api.addrs.addr.regex=true' &"
                 """
+                sleep 20
             }
         }
         stage('Run ZAP Spider Scan') {
