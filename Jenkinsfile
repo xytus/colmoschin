@@ -10,7 +10,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Installing dependencies...'
-                sh 'pip3 install requirements.txt'
+                sh 'pip3 install -r requirements.txt'
                 echo 'Starting Flask application...'
                 sh 'python3 app.py &'
             }
