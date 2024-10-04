@@ -19,7 +19,6 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running unit tests using pytest...'
-                sh 'which pytest'
                 sh 'pytest test_app.py'
             }
         }
