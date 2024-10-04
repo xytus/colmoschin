@@ -4,7 +4,6 @@ pipeline {
         ZAP_HOST = '192.168.1.5'           // IP address of the Kali Linux VM where OWASP ZAP is running
         LOCAL_APP_URL = 'http://192.168.1.6:5000' // URL of the Flask application running on the Jenkins (Ubuntu) server
         API_KEY = 'efvupltk0ia150atbs2prendc9'  // Include your ZAP API Key here if required
-        SSH_PASSWORD = 'colmoschin'   // Replace with your actual password for the Kali machine
     }
     stages {
         stage('Clone') {
@@ -27,20 +26,11 @@ pipeline {
                 sh 'python3 test_app.py'
             }
         }
-        stage('Start OWASP ZAP') {
-            steps {
-                echo 'Starting OWASP ZAP on the Kali Linux machine...'
-                // Use sshpass to start ZAP on the remote Kali machine
-                sh """
-                sshpass -p '${SSH_PASSWORD}' ssh -o StrictHostKeyChecking=no colmoschin@${ZAP_HOST} "zaproxy -daemon -host 0.0.0.0 -port 8080 -config 'api.addrs.addr.name=.*' -config 'api.addrs.addr.regex=true'"
-                """
-                sleep 15 // Give some time for ZAP to fully start
-            }
-        }
         stage('Run ZAP Spider Scan') {
             steps {
                 echo 'Running OWASP ZAP Spider scan...'
                 script {
+                    // Run ZAP Spider scan with API key if needed
                     sh """
                     curl -X POST "http://${ZAP_HOST}:8080/JSON/spider/action/scan/" \
                          -H "Content-Type: application/x-www-form-urlencoded" \
@@ -54,6 +44,7 @@ pipeline {
             steps {
                 echo 'Running OWASP ZAP Active scan...'
                 script {
+                    // Run ZAP Active scan with API key if needed
                     sh """
                     curl -X POST "http://${ZAP_HOST}:8080/JSON/ascan/action/scan/" \
                          -H "Content-Type: application/x-www-form-urlencoded" \
@@ -66,6 +57,7 @@ pipeline {
         stage('Save ZAP Report') {
             steps {
                 echo 'Saving OWASP ZAP report...'
+                // Retrieve the ZAP report in XML format with API key if needed
                 sh """
                 curl -X GET "http://${ZAP_HOST}:8080/OTHER/core/other/xmlreport/?apikey=${API_KEY}" \
                      -H "Content-Type: application/x-www-form-urlencoded" \
@@ -76,6 +68,7 @@ pipeline {
         stage('Publish ZAP Report') {
             steps {
                 echo 'Publishing OWASP ZAP report...'
+                // Publish the OWASP ZAP report in Jenkins
                 publishHTML(target: [
                     reportName: 'OWASP ZAP Report',
                     reportDir: '',
