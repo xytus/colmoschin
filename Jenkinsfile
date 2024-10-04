@@ -4,7 +4,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 echo 'Cloning the GitHub repository...'
-                git 'https://github.com/xytus/SimpleFlaskApp.git'
+                git 'https://github.com/xytus/colmoschin.git'
             }
         }
         stage('Install Dependencies') {
