@@ -17,7 +17,6 @@ pipeline {
                 sh 'pip3 install -r requirements.txt'
                 echo 'Starting Flask application...'
                 sh 'nohup python3 app.py &'
-                sleep 10
             }
         }
         stage('Test') {
@@ -37,7 +36,6 @@ pipeline {
                          -d "url=${LOCAL_APP_URL}&recurse=true"
                     """
                 }
-                sleep 30 // Adjust the sleep time based on the size of the target application
             }
         }
         stage('Run ZAP Active Scan') {
@@ -51,7 +49,6 @@ pipeline {
                          -d "url=${LOCAL_APP_URL}"
                     """
                 }
-                sleep 60 // Adjust the sleep time based on the size of the target application
             }
         }
         stage('Save ZAP Report') {
