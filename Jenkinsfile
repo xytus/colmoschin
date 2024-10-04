@@ -65,21 +65,6 @@ pipeline {
                 """
             }
         }
-        stage('Save ZAP PDF Report') {
-            steps {
-                echo 'Saving OWASP ZAP report as PDF...'
-                // Retrieve the ZAP report in PDF format
-                sh """
-                curl -X GET "http://${ZAP_HOST}:8080/OTHER/exportreport/view/exportreport/?apikey=${ZAP_API_KEY}" \
-                     -H "Content-Type: application/x-www-form-urlencoded" \
-                     -d "title=OWASP%20ZAP%20Scan%20Report" \
-                     -d "fileformat=PDF" \
-                     -d "contexts=Default%20Context" \
-                     -d "sites=${LOCAL_APP_URL}" \
-                     -o zap_report.pdf
-                """
-            }
-        }
         stage('Publish ZAP Report') {
             steps {
                 echo 'Publishing OWASP ZAP report...'
@@ -87,7 +72,7 @@ pipeline {
                 publishHTML(target: [
                     reportName: 'OWASP ZAP Report',
                     reportDir: '',
-                    reportFiles: 'zap_report.pdf',
+                    reportFiles: 'zap_report.xml',
                     keepAll: true,
                     alwaysLinkToLastBuild: true,
                     allowMissing: true
