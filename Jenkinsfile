@@ -11,16 +11,14 @@ pipeline {
             steps {
                 echo 'Installing dependencies...'
                 sh 'pip3 install -r requirements.txt'
-                sh 'pip3 install pytest==6.2.4'
                 echo 'Starting Flask application...'
                 sh 'python3 app.py &'
             }
         }
         stage('Test') {
             steps {
-                echo 'Running unit tests using pytest...'
-                sh '/usr/local/bin/pytest test_app.py'
-
+                echo 'Running unit tests using unittest...'
+                sh 'python3 test_app.py'
             }
         }
     }
