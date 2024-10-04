@@ -16,8 +16,8 @@ pipeline {
                 echo 'Installing dependencies...'
                 sh 'pip3 install -r requirements.txt'
                 echo 'Starting Flask application...'
-                // Start the Flask application in the background
                 sh 'nohup python3 app.py &'
+                sleep 10
             }
         }
         stage('Test') {
@@ -26,27 +26,32 @@ pipeline {
                 sh 'python3 test_app.py'
             }
         }
-        // Skip the "Start OWASP ZAP" and "Stop OWASP ZAP" stages as ZAP is already running manually
         stage('Run ZAP Spider Scan') {
             steps {
                 echo 'Running OWASP ZAP Spider scan...'
                 script {
-                    // Run ZAP Spider scan on the locally hosted application on the Jenkins server
+                    // Include the correct content-type header
                     sh """
-                    curl -X POST "http://${ZAP_HOST}:8080/JSON/spider/action/scan/?url=${LOCAL_APP_URL}&recurse=true"
+                    curl -X POST "http://${ZAP_HOST}:8080/JSON/spider/action/scan/" \
+                         -H "Content-Type: application/x-www-form-urlencoded" \
+                         -d "url=${LOCAL_APP_URL}&recurse=true"
                     """
                 }
+                sleep 30 // Adjust the sleep time based on the size of the target application
             }
         }
         stage('Run ZAP Active Scan') {
             steps {
                 echo 'Running OWASP ZAP Active scan...'
                 script {
-                    // Run ZAP Active scan on the application
+                    // Include the correct content-type header
                     sh """
-                    curl -X POST "http://${ZAP_HOST}:8080/JSON/ascan/action/scan/?url=${LOCAL_APP_URL}"
+                    curl -X POST "http://${ZAP_HOST}:8080/JSON/ascan/action/scan/" \
+                         -H "Content-Type: application/x-www-form-urlencoded" \
+                         -d "url=${LOCAL_APP_URL}"
                     """
                 }
+                sleep 60 // Adjust the sleep time based on the size of the target application
             }
         }
         stage('Save ZAP Report') {
@@ -54,7 +59,9 @@ pipeline {
                 echo 'Saving OWASP ZAP report...'
                 // Retrieve the ZAP report in XML format
                 sh """
-                curl "http://${ZAP_HOST}:8080/OTHER/core/other/xmlreport/" -o zap_report.xml
+                curl -X GET "http://${ZAP_HOST}:8080/OTHER/core/other/xmlreport/" \
+                     -H "Content-Type: application/x-www-form-urlencoded" \
+                     -o zap_report.xml
                 """
             }
         }
