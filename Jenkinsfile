@@ -18,7 +18,6 @@ pipeline {
                 sh 'pip3 install -r requirements.txt'
                 echo 'Starting Flask application...'
                 sh 'nohup python3 app.py &'
-                sleep 10 // Give the Flask app some time to start
             }
         }
         stage('Test') {
@@ -38,7 +37,6 @@ pipeline {
                          -d "url=${LOCAL_APP_URL}&recurse=true&apikey=${API_KEY}"
                     """
                 }
-                sleep 15 // Wait for the Spider scan to complete
             }
         }
         stage('Run ZAP Active Scan') {
@@ -52,7 +50,6 @@ pipeline {
                          -d "url=${LOCAL_APP_URL}&apikey=${API_KEY}"
                     """
                 }
-                sleep 30 // Wait for the Active scan to complete
             }
         }
         stage('Save ZAP Report') {
