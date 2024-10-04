@@ -75,7 +75,7 @@ pipeline {
                     reportFiles: 'zap_report.xml',
                     keepAll: true,
                     alwaysLinkToLastBuild: true,
-                    allowMissing: true
+                    allowMissing: false
                 ])
             }
         }
