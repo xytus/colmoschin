@@ -11,7 +11,7 @@ pipeline {
             steps {
                 echo 'Installing dependencies...'
                 sh 'pip3 install -r requirements.txt'
-                sh 'pip3 install pytest'
+                sh 'pip3 install pytest==6.2.4'
                 echo 'Starting Flask application...'
                 sh 'python3 app.py &'
             }
