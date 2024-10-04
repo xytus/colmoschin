@@ -19,7 +19,8 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running unit tests using pytest...'
-                sh 'pytest test_app.py'
+                sh '/usr/local/bin/pytest test_app.py'
+
             }
         }
     }
