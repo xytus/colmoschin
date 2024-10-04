@@ -18,7 +18,6 @@ pipeline {
                 echo 'Starting Flask application...'
                 // Start the Flask application in the background
                 sh 'nohup python3 app.py &'
-                sleep 10
             }
         }
         stage('Test') {
@@ -37,7 +36,6 @@ pipeline {
                     curl -X POST "http://${ZAP_HOST}:8080/JSON/spider/action/scan/?url=${LOCAL_APP_URL}&recurse=true"
                     """
                 }
-                sleep 30 // Adjust the sleep time based on the size of the target application
             }
         }
         stage('Run ZAP Active Scan') {
@@ -49,7 +47,6 @@ pipeline {
                     curl -X POST "http://${ZAP_HOST}:8080/JSON/ascan/action/scan/?url=${LOCAL_APP_URL}"
                     """
                 }
-                sleep 60 // Adjust the sleep time based on the size of the target application
             }
         }
         stage('Save ZAP Report') {
