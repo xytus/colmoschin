@@ -23,8 +23,9 @@ pipeline {
         }
         stage('Dependency Check') { 
             steps { 
+                sh'dependency-check --scan ./ --out report'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml' 
-            } 
+            }
         }
     }
 }
