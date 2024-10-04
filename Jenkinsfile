@@ -1,22 +1,24 @@
 pipeline {
     agent any
     stages {
-        stage('Clone Repository') {
+        stage('Clone') {
             steps {
                 echo 'Cloning the GitHub repository...'
                 git branch: 'main', url: 'https://github.com/xytus/colmoschin.git'
             }
         }
-        stage('Install Dependencies') {
+        stage('Build') {
             steps {
                 echo 'Installing dependencies...'
                 sh 'pip3 install -r requirements.txt'
+                echo 'Starting Flask application...'
+                sh 'python3 app.py &'
             }
         }
-        stage('Start Flask Application') {
+        stage('Test') {
             steps {
-                echo 'Starting Flask application...'
-                sh 'nohup python3 app.py > flask.log 2>&1 &'
+                echo 'Running unit tests using pytest...'
+                sh 'pytest test_app.py'
             }
         }
     }
