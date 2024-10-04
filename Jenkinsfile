@@ -3,7 +3,7 @@ pipeline {
     environment {
         ZAP_HOST = '192.168.1.5'           // IP address of the Kali Linux VM where OWASP ZAP is running
         LOCAL_APP_URL = 'http://192.168.1.6:5000' // URL of the Flask application running on the Jenkins (Ubuntu) server
-        API_KEY = 'efvupltk0ia150atbs2prendc9'  // Include your ZAP API Key here if required
+        API_KEY = ''  // Include your ZAP API Key here if required
     }
     stages {
         stage('Clone') {
