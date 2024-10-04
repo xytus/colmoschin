@@ -3,6 +3,7 @@ pipeline {
     environment {
         ZAP_HOST = '192.168.1.5'           // IP address of the Kali Linux VM where OWASP ZAP is running
         LOCAL_APP_URL = 'http://192.168.1.6:5000' // URL of the Flask application running on the Jenkins (Ubuntu) server
+        API_KEY = 'efvupltkOia15Oatbs2prendc9'  // Include your ZAP API Key here if required
     }
     stages {
         stage('Clone') {
@@ -17,6 +18,7 @@ pipeline {
                 sh 'pip3 install -r requirements.txt'
                 echo 'Starting Flask application...'
                 sh 'nohup python3 app.py &'
+                sleep 10 // Give the Flask app some time to start
             }
         }
         stage('Test') {
@@ -29,34 +31,36 @@ pipeline {
             steps {
                 echo 'Running OWASP ZAP Spider scan...'
                 script {
-                    // Include the correct content-type header
+                    // Run ZAP Spider scan with API key if needed
                     sh """
                     curl -X POST "http://${ZAP_HOST}:8080/JSON/spider/action/scan/" \
                          -H "Content-Type: application/x-www-form-urlencoded" \
-                         -d "url=${LOCAL_APP_URL}&recurse=true"
+                         -d "url=${LOCAL_APP_URL}&recurse=true&apikey=${API_KEY}"
                     """
                 }
+                sleep 15 // Wait for the Spider scan to complete
             }
         }
         stage('Run ZAP Active Scan') {
             steps {
                 echo 'Running OWASP ZAP Active scan...'
                 script {
-                    // Include the correct content-type header
+                    // Run ZAP Active scan with API key if needed
                     sh """
                     curl -X POST "http://${ZAP_HOST}:8080/JSON/ascan/action/scan/" \
                          -H "Content-Type: application/x-www-form-urlencoded" \
-                         -d "url=${LOCAL_APP_URL}"
+                         -d "url=${LOCAL_APP_URL}&apikey=${API_KEY}"
                     """
                 }
+                sleep 30 // Wait for the Active scan to complete
             }
         }
         stage('Save ZAP Report') {
             steps {
                 echo 'Saving OWASP ZAP report...'
-                // Retrieve the ZAP report in XML format
+                // Retrieve the ZAP report in XML format with API key if needed
                 sh """
-                curl -X GET "http://${ZAP_HOST}:8080/OTHER/core/other/xmlreport/" \
+                curl -X GET "http://${ZAP_HOST}:8080/OTHER/core/other/xmlreport/?apikey=${API_KEY}" \
                      -H "Content-Type: application/x-www-form-urlencoded" \
                      -o zap_report.xml
                 """
