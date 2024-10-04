@@ -24,6 +24,7 @@ pipeline {
         stage('Dependency Check') {
             steps {
                 echo 'Running OWASP Dependency-Check...'
+                sh '/usr/local/bin/dependency-check --updateonly'
                 sh '/usr/local/bin/dependency-check --project "colmoschin_assignment_1" --scan . --format "ALL" --out "./dependency-check-report"'
     }
 }
