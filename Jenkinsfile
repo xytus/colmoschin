@@ -3,8 +3,6 @@ pipeline {
     environment {
         ZAP_HOST = '192.168.1.5'           // IP address of the Kali Linux VM where OWASP ZAP is running
         LOCAL_APP_URL = 'http://192.168.1.6:5000' // URL of the Flask application running on the Jenkins (Ubuntu) server
-        SSH_PASSWORD = 'colmoschin' // Replace with the SSH password for the Kali Linux VM
-        SSH_USER = 'colmoschin'             // Replace with the SSH username for the Kali Linux VM
     }
     stages {
         stage('Clone') {
@@ -29,31 +27,7 @@ pipeline {
                 sh 'python3 test_app.py'
             }
         }
-        stage('Start OWASP ZAP') {
-            steps {
-                echo 'Starting OWASP ZAP on the Kali Linux machine using sshpass...'
-                sh """
-                sshpass -p '${SSH_PASSWORD}' ssh -o StrictHostKeyChecking=no ${SSH_USER}@${ZAP_HOST} "nohup zaproxy -daemon -host 0.0.0.0 -port 8080 -config 'api.addrs.addr.name=.*' -config 'api.addrs.addr.regex=true' &"
-                """
-                // Add a sleep to allow ZAP to fully initialize
-                sleep 20
-            }
-        }
-        stage('Verify ZAP Startup') {
-            steps {
-                script {
-                    def zapReady = sh(script: """
-                        sshpass -p '${SSH_PASSWORD}' ssh -o StrictHostKeyChecking=no ${SSH_USER}@${ZAP_HOST} "curl -s http://0.0.0.0:8080/JSON/core/view/version/ | grep -q 'ZAP' "
-                    """, returnStatus: true) == 0
-
-                    if (!zapReady) {
-                        error "ZAP failed to start or is not responding on port 8080."
-                    } else {
-                        echo "ZAP is running and ready to accept commands."
-                    }
-                }
-            }
-        }
+        // Skip the "Start OWASP ZAP" and "Stop OWASP ZAP" stages as ZAP is already running manually
         stage('Run ZAP Spider Scan') {
             steps {
                 echo 'Running OWASP ZAP Spider scan...'
@@ -99,14 +73,6 @@ pipeline {
                     alwaysLinkToLastBuild: true,
                     allowMissing: false
                 ])
-            }
-        }
-        stage('Stop OWASP ZAP') {
-            steps {
-                echo 'Stopping OWASP ZAP on the Kali Linux machine...'
-                sh """
-                sshpass -p '${SSH_PASSWORD}' ssh -o StrictHostKeyChecking=no ${SSH_USER}@${ZAP_HOST} "pkill -f zaproxy"
-                """
             }
         }
     }
